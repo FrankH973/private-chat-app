@@ -1,2 +1,19 @@
 web: daphne -b 0.0.0.0 -p $PORT private_chat_app.asgi:application
 node_modules/
+# Sensitive files
+*.keystore
+*.jks
+
+# Database
+*.sqlite3
+db.sqlite3
+
+# Android build outputs
+android/app/build/
+android/build/
+*.apk
+*.aab
+
+# Large binary files
+*.dex
+*.class

@@ -18,9 +18,9 @@ android {
     signingConfigs {
         release {
             storeFile file('private-chat-release.keystore')
-            storePassword 'Zmaxusa17!'
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: "dev-password"
             keyAlias 'private-chat'
-            keyPassword 'Zmaxusa17!'
+            kkeyPassword System.getenv("KEY_PASSWORD") ?: "dev-password"
         }
     }
     
