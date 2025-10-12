@@ -8,7 +8,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='your-secret-key-here')
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '10.0.2.2', '*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '10.0.2.2', '*','private-chat-app-j5to.onrender.com']
+CSRF_TRUSTED_ORIGINS = [
+    'https://private-chat-app-j5to.onrender.com',
+]
 
 INSTALLED_APPS = [
     'daphne',  # MUST be first!
