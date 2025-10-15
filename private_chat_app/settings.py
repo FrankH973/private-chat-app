@@ -2,6 +2,7 @@ import os
 from decouple import config
 from pathlib import Path
 import dj_database_url
+import cloudinary
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -13,6 +14,14 @@ CSRF_TRUSTED_ORIGINS = [
     'https://private-chat-app-j5to.onrender.com',
 ]
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET':os.environ.get('CLOUDINARY_API_SECRET'),
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 INSTALLED_APPS = [
     'daphne',  # MUST be first!
     'django.contrib.admin',
@@ -20,7 +29,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary',
     'channels',
     'corsheaders',
     'crispy_forms',

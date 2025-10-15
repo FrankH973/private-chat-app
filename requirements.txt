@@ -10,3 +10,5 @@ django-crispy-forms==2.0
 crispy-bootstrap5==0.7
 whitenoise==6.5.0
 Pillow==11.3.0
+cloudinary==1.41.0
+django-cloudinary-storage==0.3.0
