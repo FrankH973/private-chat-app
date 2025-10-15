@@ -3,10 +3,9 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from django.core.files.storage import default_storage
 from django.conf import settings
 from .models import ChatRoom, Message
-import os
+import cloudinary.uploader
 import uuid
 
 @login_required
@@ -37,29 +36,46 @@ def upload_file(request, room_id):
             'error': f'File type not allowed. Allowed: {", ".join(settings.ALLOWED_FILE_EXTENSIONS)}'
         }, status=400)
     
-    # Generate unique filename
-    unique_name = f"{uuid.uuid4()}.{ext}"
-    file_path = f"chat_files/{room_id}/{unique_name}"
-    
-    # Save file
-    saved_path = default_storage.save(file_path, file)
-    
-    # Determine message type
+    # Determine message type and Cloudinary resource type
     message_type = 'file'
+    resource_type = 'raw'  # Default for documents/files
+    
     if ext in ['jpg', 'jpeg', 'png', 'gif', 'webp']:
         message_type = 'image'
+        resource_type = 'image'
     elif ext in ['mp4', 'mov', 'avi']:
         message_type = 'video'
+        resource_type = 'video'
     elif ext in ['mp3', 'wav']:
         message_type = 'audio'
+        resource_type = 'raw'
     
-    # Create message
+    # Generate unique filename
+    unique_name = f"{uuid.uuid4()}.{ext}"
+    
+    try:
+        # Upload to Cloudinary with correct resource_type
+        upload_result = cloudinary.uploader.upload(
+            file,
+            folder=f"chat_files/{room_id}",
+            public_id=unique_name.rsplit('.', 1)[0],  # Remove extension from public_id
+            resource_type=resource_type
+        )
+        
+        file_url = upload_result['secure_url']
+        
+    except Exception as e:
+        return JsonResponse({
+            'error': f'Upload failed: {str(e)}'
+        }, status=500)
+    
+    # Create message (store Cloudinary URL in file field)
     message = Message.objects.create(
         chat_room=room,
         sender=request.user,
         message_type=message_type,
         encrypted_content=file.name,
-        file=saved_path,
+        file=file_url,  # Store Cloudinary URL
         file_name=file.name,
         file_size=file.size
     )
@@ -67,7 +83,7 @@ def upload_file(request, room_id):
     return JsonResponse({
         'success': True,
         'message_id': message.id,
-        'file_url': message.file.url,
+        'file_url': file_url,
         'file_name': message.file_name,
         'file_size': message.file_size,
         'message_type': message_type
