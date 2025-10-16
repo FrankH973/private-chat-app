@@ -162,7 +162,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return {
                 'id': msg.id,
                 'message_type': msg.message_type,
-                'file_url': msg.file.url if msg.file else None,
+                'file_url': msg.file if msg.file else None,
                 'file_name': msg.file_name,
                 'file_size': msg.file_size,
                 'timestamp': msg.timestamp.isoformat()
