@@ -63,6 +63,10 @@ def upload_file(request, room_id):
         )
         
         file_url = upload_result['secure_url']
+
+        #Force download for non-image files
+        if resource_type != 'image':
+           file_url = file_url.replace('/upload/','/upload/fl_attachment/') 
         
     except Exception as e:
         return JsonResponse({
