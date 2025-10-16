@@ -52,7 +52,7 @@ class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     message_type = models.CharField(max_length=10, choices=MESSAGE_TYPES, default='text')
     encrypted_content = models.TextField()
-    file = models.FileField(upload_to='chat_files/%Y/%m/%d/', blank=True, null=True)
+    file = models.URLField(max_length=500, blank=True, null=True)
     file_name = models.CharField(max_length=255, blank=True, null=True)
     file_size = models.BigIntegerField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
